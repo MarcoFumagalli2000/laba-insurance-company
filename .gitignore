@@ -1,7 +1,7 @@
 target/
 .idea/
 Insurance.iml
-.gitignore
 lib/
 out/
 src/main/resources/output.txt
+temp-classes
