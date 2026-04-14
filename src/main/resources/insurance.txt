@@ -1,0 +1,5 @@
+Berliner Insurance
+
+This insurance company was built in 1997, it was the first insurance company in New Hampshire
+
+Now it's mainly a vehicle insurance, but we also do objects.

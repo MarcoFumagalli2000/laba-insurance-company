@@ -1,0 +1,5 @@
+Word: Request | Count: 0 | Status: Processed
+Word: insurance | Count: 0 | Status: Processed
+Word: insurance | Count: 0 | Status: Processed
+Word: insurance | Count: 4 | Status: Processed
+Word: insurance | Count: 4 | Status: Processed
