@@ -1,4 +1,4 @@
-package com.solvd.InsuranceCompany.Tracking;
+package com.solvd.InsuranceCompany.tracking;
 
 public abstract class Records {
 

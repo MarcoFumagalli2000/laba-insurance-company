@@ -1,9 +1,11 @@
-package com.solvd.InsuranceCompany.People;
+package com.solvd.InsuranceCompany.people;
+
+import com.solvd.InsuranceCompany.enums.EmployeeRole;
 
 public class Employee extends Person {
 
-	private String employeeRole;
 	private String employeeHours;
+	private EmployeeRole role;
 
 	public Employee(
 		String name,
@@ -11,20 +13,20 @@ public class Employee extends Person {
 		String idNumber,
 		String phoneNumber,
 		String email,
-		String employeeRole,
+		EmployeeRole role,
 		String employeeHours
 	) {
 		super(name, lastName, idNumber, phoneNumber, email);
-		this.employeeRole = employeeRole;
+		this.role = role;
 		this.employeeHours = employeeHours;
 	}
 
-	public String getEmployeeRole() {
-		return employeeRole;
+	public EmployeeRole getRole() {
+		return role;
 	}
 
-	public void setEmployeeRole(String employeeRole) {
-		this.employeeRole = employeeRole;
+	public void setRole(EmployeeRole role) {
+		this.role = role;
 	}
 
 	public String getEmployeeHours() {

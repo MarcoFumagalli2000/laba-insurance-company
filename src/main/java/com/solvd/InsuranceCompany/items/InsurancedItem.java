@@ -1,47 +1,50 @@
-package com.solvd.InsuranceCompany.Items;
+package com.solvd.InsuranceCompany.items;
 
-import com.solvd.InsuranceCompany.Exceptions.InvalidValue;
-import com.solvd.InsuranceCompany.Interfaces.ITracker;
-import com.solvd.InsuranceCompany.People.Client;
+import com.solvd.InsuranceCompany.exceptions.InvalidValue;
+import com.solvd.InsuranceCompany.interfaces.ITracker;
+import com.solvd.InsuranceCompany.people.Client;
+
 public abstract class InsurancedItem implements ITracker {
-    private static int itemTracker = 0;
-    private Client owner;
-    private double value;
-    public InsurancedItem(Client owner, double value) throws InvalidValue{
-        if (value <= 0) {
-            throw new InvalidValue("Insurance value must be positive");
-        }
-        this.owner = owner;
-        this.value = value;
-        itemTracker++;
-    }
 
-    public static int getItemTracker() {
-        return itemTracker;
-    }
+	private static int itemTracker = 0;
+	private Client owner;
+	private double value;
 
-    public static void setItemTracker(int itemTracker) {
-        InsurancedItem.itemTracker = itemTracker;
-    }
+	public InsurancedItem(Client owner, double value) throws InvalidValue {
+		if (value <= 0) {
+			throw new InvalidValue("Insurance value must be positive");
+		}
+		this.owner = owner;
+		this.value = value;
+		itemTracker++;
+	}
 
-    public Client getOwner() {
-        return owner;
-    }
+	public static int getItemTracker() {
+		return itemTracker;
+	}
 
-    public void setOwner(Client owner) {
-        this.owner = owner;
-    }
+	public static void setItemTracker(int itemTracker) {
+		InsurancedItem.itemTracker = itemTracker;
+	}
 
-    public double getValue() {
-        return value;
-    }
+	public Client getOwner() {
+		return owner;
+	}
 
-    public void setValue(double value) {
-        this.value = value;
-    }
+	public void setOwner(Client owner) {
+		this.owner = owner;
+	}
 
-    @Override
-    public int itemAmount(){
-        return itemTracker;
-    }
+	public double getValue() {
+		return value;
+	}
+
+	public void setValue(double value) {
+		this.value = value;
+	}
+
+	@Override
+	public int itemAmount() {
+		return itemTracker;
+	}
 }

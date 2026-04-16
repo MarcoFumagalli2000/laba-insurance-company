@@ -1,26 +1,30 @@
-package com.solvd.InsuranceCompany.Tracking;
+package com.solvd.InsuranceCompany.tracking;
 
-import com.solvd.InsuranceCompany.Exceptions.UnauthorizedRequest;
-import com.solvd.InsuranceCompany.Interfaces.IStatus;
-import com.solvd.InsuranceCompany.People.Client;
+import com.solvd.InsuranceCompany.enums.RequestStatus;
+import com.solvd.InsuranceCompany.exceptions.UnauthorizedRequest;
+import com.solvd.InsuranceCompany.interfaces.IStatus;
+import com.solvd.InsuranceCompany.interfaces.IValidation;
+import com.solvd.InsuranceCompany.people.Client;
 
 import java.util.Objects;
 
 
 public class ClientRequests implements IStatus {
 
+	private static final IValidation REQUEST_VALIDATION =
+		req -> req != null && req.getStatus() != null;
 	private String requestType;
 	private int requestValue;
 	private int requestNumber;
-	private boolean isSolved;
+	private RequestStatus status;
 	private Client client;
 
-	public ClientRequests(String requestType, int requestValue, int requestNumber, boolean isSolved, Client client) {
+	public ClientRequests(String requestType, int requestValue, int requestNumber, RequestStatus status, Client client) {
 		this.requestType = requestType;
 		this.requestValue = requestValue;
 		this.requestNumber = requestNumber;
-		this.isSolved = isSolved;
 		this.client = client;
+		setStatus(status);
 	}
 
 	public String getRequestType() {
@@ -47,12 +51,21 @@ public class ClientRequests implements IStatus {
 		this.requestNumber = requestNumber;
 	}
 
-	public boolean isSolved() {
-		return isSolved;
+	public RequestStatus getStatus() {
+		return status;
 	}
 
-	public void setSolved(boolean solved) {
-		isSolved = solved;
+	public void setStatus(RequestStatus status) {
+		RequestStatus previousStatus = this.status;
+		this.status = status;
+		if (!REQUEST_VALIDATION.isValid(this)) {
+			this.status = previousStatus;
+			throw new IllegalArgumentException("Request status cannot be null.");
+		}
+	}
+
+	public boolean hasValidStatus() {
+		return REQUEST_VALIDATION.isValid(this);
 	}
 
 	public Client getClient() {
@@ -77,12 +90,17 @@ public class ClientRequests implements IStatus {
 
 	@Override
 	public String getStatusMessage(double payout) {
-		if (this.isSolved) {
-			return "STATUS: Completed. Your liquidation of $" + payout + " has been aprobed.";
-		} else {
-			return "STATUS: Processing. Our employees are reviewing your request #" + this.getRequestNumber();
+		if (!hasValidStatus()) {
+			throw new IllegalStateException("Request status is invalid.");
 		}
-	}
+		if (this.status == RequestStatus.APPROVED) {
+			return "STATUS: Completed. Your liquidation of $" + payout + " has been approved.";
+		} else if (this.status == RequestStatus.PENDING) {
+			return "STATUS: Processing. Our employees are reviewing your request #" + this.getRequestNumber();
+		} else {
+			return "STATUS: Rejected.";
+		}
+    }
 
 	@Override
 	public boolean equals(Object o) {

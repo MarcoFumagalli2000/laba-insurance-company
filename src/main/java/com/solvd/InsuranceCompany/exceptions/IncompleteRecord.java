@@ -1,4 +1,4 @@
-package com.solvd.InsuranceCompany.Exceptions;
+package com.solvd.InsuranceCompany.exceptions;
 
 public class IncompleteRecord extends Exception {
 

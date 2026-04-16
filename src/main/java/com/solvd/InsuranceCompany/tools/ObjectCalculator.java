@@ -1,21 +1,16 @@
-package com.solvd.InsuranceCompany.Tools;
+package com.solvd.InsuranceCompany.tools;
 
-import com.solvd.InsuranceCompany.Interfaces.ICalculate;
-import com.solvd.InsuranceCompany.Items.OtherObjects;
-import com.solvd.InsuranceCompany.People.Client;
-import com.solvd.InsuranceCompany.Tracking.ObjectRecord;
+import com.solvd.InsuranceCompany.interfaces.ICalculate;
+import com.solvd.InsuranceCompany.items.OtherObjects;
+import com.solvd.InsuranceCompany.people.Client;
+import com.solvd.InsuranceCompany.tracking.ObjectRecord;
 
 public class ObjectCalculator extends BaseCalculator<OtherObjects, ObjectRecord> implements ICalculate<OtherObjects> {
 
 	private Client owner;
 	private double repairPrice;
 
-	public ObjectCalculator(
-			Client owner,
-			double repairPrice,
-			OtherObjects object,
-			ObjectRecord records
-	) {
+	public ObjectCalculator(Client owner, double repairPrice, OtherObjects object, ObjectRecord records) {
 		super(object, records);
 		this.owner = owner;
 		this.repairPrice = repairPrice;
@@ -64,15 +59,10 @@ public class ObjectCalculator extends BaseCalculator<OtherObjects, ObjectRecord>
 
 	@Override
 	public double calculatePayout() {
-		if (this.records.isStolen()) {
-			return this.item.getValue();
-		}
-		else if (this.records.totalBrakes() > 2) {
-			return this.repairPrice * 0.7;
+		if (this.records.totalBrakes() > 2) {
+			return applyTax(this.repairPrice * 0.7);
 		} else {
-			return this.repairPrice * 0.9;
+			return applyTax(this.repairPrice * 0.9);
 		}
 	}
-
-
 }

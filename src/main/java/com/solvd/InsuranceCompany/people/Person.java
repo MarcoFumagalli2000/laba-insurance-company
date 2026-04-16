@@ -1,4 +1,4 @@
-package com.solvd.InsuranceCompany.People;
+package com.solvd.InsuranceCompany.people;
 
 import java.util.Objects;
 

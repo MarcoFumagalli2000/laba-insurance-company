@@ -1,4 +1,4 @@
-package com.solvd.InsuranceCompany.Interfaces;
+package com.solvd.InsuranceCompany.interfaces;
 
 public interface ITracker {
 	int itemAmount();

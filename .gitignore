@@ -3,5 +3,4 @@ target/
 Insurance.iml
 lib/
 out/
-src/main/resources/output.txt
 temp-classes

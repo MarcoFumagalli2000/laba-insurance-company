@@ -1,9 +1,9 @@
-package com.solvd.InsuranceCompany.Tools;
+package com.solvd.InsuranceCompany.tools;
 
-import com.solvd.InsuranceCompany.Interfaces.ICalculate;
-import com.solvd.InsuranceCompany.Items.Vehicle;
-import com.solvd.InsuranceCompany.People.Client;
-import com.solvd.InsuranceCompany.Tracking.VehicleRecords;
+import com.solvd.InsuranceCompany.interfaces.ICalculate;
+import com.solvd.InsuranceCompany.items.Vehicle;
+import com.solvd.InsuranceCompany.people.Client;
+import com.solvd.InsuranceCompany.tracking.VehicleRecords;
 
 public class VehicleCalculator extends BaseCalculator<Vehicle, VehicleRecords> implements ICalculate<Vehicle> {
 
@@ -45,9 +45,8 @@ public class VehicleCalculator extends BaseCalculator<Vehicle, VehicleRecords> i
 	public double calculatePayout() {
 		double base = this.getRepairPrice();
 		if (this.records.crashNumbers() > 3) {
-			return base * 0.7;
+			return applyTax(base * 0.7);
 		}
-		return base * 0.9;
+		return applyTax(base * 0.9);
 	}
-
 }

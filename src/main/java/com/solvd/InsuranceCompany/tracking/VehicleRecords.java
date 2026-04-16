@@ -1,7 +1,7 @@
-package com.solvd.InsuranceCompany.Tracking;
+package com.solvd.InsuranceCompany.tracking;
 
-import com.solvd.InsuranceCompany.Exceptions.IncompleteRecord;
-import com.solvd.InsuranceCompany.Interfaces.ICrashes;
+import com.solvd.InsuranceCompany.exceptions.IncompleteRecord;
+import com.solvd.InsuranceCompany.interfaces.ICrashes;
 
 import java.util.Objects;
 

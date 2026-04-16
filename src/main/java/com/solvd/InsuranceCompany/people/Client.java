@@ -1,12 +1,12 @@
-package com.solvd.InsuranceCompany.People;
+package com.solvd.InsuranceCompany.people;
 
-import com.solvd.InsuranceCompany.Items.InsurancedItem;
+import com.solvd.InsuranceCompany.items.InsurancedItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Client extends Person {
-	private List<InsurancedItem> myItems = new ArrayList<>();
+	private final List<InsurancedItem> myItems = new ArrayList<>();
 	public Client(String name, String lastName, String idNumber, String phoneNumber, String email) {
 		super(name, lastName, idNumber, phoneNumber, email);
 	}

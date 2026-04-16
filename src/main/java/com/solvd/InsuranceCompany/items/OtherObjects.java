@@ -1,8 +1,8 @@
-package com.solvd.InsuranceCompany.Items;
+package com.solvd.InsuranceCompany.items;
 
-import com.solvd.InsuranceCompany.Enums.ObjectType;
-import com.solvd.InsuranceCompany.Exceptions.InvalidValue;
-import com.solvd.InsuranceCompany.People.Client;
+import com.solvd.InsuranceCompany.enums.ObjectType;
+import com.solvd.InsuranceCompany.exceptions.InvalidValue;
+import com.solvd.InsuranceCompany.people.Client;
 
 import java.util.Objects;
 
