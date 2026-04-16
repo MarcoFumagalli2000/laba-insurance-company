@@ -1,5 +1,6 @@
 package com.solvd.InsuranceCompany.Items;
 
+import com.solvd.InsuranceCompany.Enums.ObjectType;
 import com.solvd.InsuranceCompany.Exceptions.InvalidValue;
 import com.solvd.InsuranceCompany.People.Client;
 
@@ -8,11 +9,11 @@ import java.util.Objects;
 public class OtherObjects extends InsurancedItem {
 
 	private String name;
-	private String type;
+	private ObjectType type;
 	private String brand;
 	private int quantity;
 
-	public OtherObjects(Client owner, double value, String name, String type, String brand, int quantity) throws InvalidValue {
+	public OtherObjects(Client owner, double value, String name, ObjectType type, String brand, int quantity) throws InvalidValue {
 		super(owner, value);
 		this.name = name;
 		this.type = type;
@@ -28,11 +29,11 @@ public class OtherObjects extends InsurancedItem {
 		this.name = name;
 	}
 
-	public String getType() {
+	public ObjectType getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(ObjectType type) {
 		this.type = type;
 	}
 
