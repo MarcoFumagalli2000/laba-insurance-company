@@ -1,25 +1,31 @@
 package com.solvd.InsuranceCompany;
 
+import com.solvd.InsuranceCompany.annotations.Rule;
 import com.solvd.InsuranceCompany.enums.EmployeeRole;
 import com.solvd.InsuranceCompany.enums.ObjectType;
 import com.solvd.InsuranceCompany.enums.RequestStatus;
 import com.solvd.InsuranceCompany.enums.VehicleType;
 import com.solvd.InsuranceCompany.exceptions.IncompleteRecord;
 import com.solvd.InsuranceCompany.exceptions.InvalidValue;
-import com.solvd.InsuranceCompany.items.InsurancedItem;
+import com.solvd.InsuranceCompany.interfaces.IInsurancedItem;
 import com.solvd.InsuranceCompany.items.OtherObjects;
 import com.solvd.InsuranceCompany.items.Vehicle;
 import com.solvd.InsuranceCompany.people.Client;
 import com.solvd.InsuranceCompany.people.Employee;
+import com.solvd.InsuranceCompany.tools.NameThread;
 import com.solvd.InsuranceCompany.tools.ObjectCalculator;
 import com.solvd.InsuranceCompany.tools.VehicleCalculator;
 import com.solvd.InsuranceCompany.tools.WordCounter;
 import com.solvd.InsuranceCompany.tracking.ClientRequests;
 import com.solvd.InsuranceCompany.tracking.ObjectRecord;
+import com.solvd.InsuranceCompany.tracking.PoolTest;
 import com.solvd.InsuranceCompany.tracking.VehicleRecords;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InaccessibleObjectException;
+import java.lang.reflect.Method;
 import java.util.*;
 
 public class Main {
@@ -29,7 +35,7 @@ public class Main {
 	public static void main(String[] args) {
 		Map<String, Client> clientMap = new HashMap<>();
 		Map<String, Employee>employeeMap = new HashMap<>();
-		List<InsurancedItem>itemList = new ArrayList<>();
+		List<IInsurancedItem>itemList = new ArrayList<>();
 		TreeSet<Double> sortedPayouts = new TreeSet<>();
 		Queue<ClientRequests> requestDone = new LinkedList<>();
 
@@ -50,10 +56,10 @@ public class Main {
 			Employee Nicolas = new Employee("Nicolas","Diez","29423817","019283910","nico10@gmail.com",EmployeeRole.MANAGER,"9 to 5");
 			Employee Gonzalo = new Employee("Gonzalo","Aranda","47082143","2611159287","garanda@gmail.com",EmployeeRole.ACCOUNTANT,"9 to 5");
 
-			clientMap.put(John.getIdNumber(), John);
-			employeeMap.put(Marco.getIdNumber(), Marco);
-			employeeMap.put(Nicolas.getIdNumber(), Nicolas);
-			employeeMap.put(Gonzalo.getIdNumber(), Gonzalo);
+			clientMap.put(John.idNumber(), John);
+			employeeMap.put(Marco.idNumber(), Marco);
+			employeeMap.put(Nicolas.idNumber(), Nicolas);
+			employeeMap.put(Gonzalo.idNumber(), Gonzalo);
 			itemList.add(Yaris);
 			itemList.add(Tornado);
 			itemList.add(necklace);
@@ -101,7 +107,8 @@ public class Main {
 			sortedPayouts.add(clientPayout3);
 			sortedPayouts.add(clientPayout5);
 
-
+			runThreadDemo();
+			runConnectionPoolDemo();
 			LOGGER.info("----Berliner insurances----");
 			LOGGER.info("Client: {}", clientMap.get("40302123"));
 
@@ -121,16 +128,18 @@ public class Main {
 			LOGGER.info("Number of completed requests: {}", requestDone.size());
 			LOGGER.info("---------------------------");
 			LOGGER.info("Assistant assigned to your case: {} | ID: {}",
-					employeeMap.get(Marco.getIdNumber()).getName(),
-					employeeMap.get(Marco.getIdNumber()).getIdNumber());
+					employeeMap.get(Marco.idNumber()).name(),
+					employeeMap.get(Marco.idNumber()).idNumber());
 			LOGGER.info("Accountant assigned to your case: {} | ID: {}",
-					employeeMap.get(Gonzalo.getIdNumber()).getName(),
-					employeeMap.get(Gonzalo.getIdNumber()).getIdNumber());
+					employeeMap.get(Gonzalo.idNumber()).name(),
+					employeeMap.get(Gonzalo.idNumber()).idNumber());
 			LOGGER.info("Manager: {} | ID: {}",
-					employeeMap.get(Nicolas.getIdNumber()).getName(),
-					employeeMap.get(Nicolas.getIdNumber()).getIdNumber());
+					employeeMap.get(Nicolas.idNumber()).name(),
+					employeeMap.get(Nicolas.idNumber()).idNumber());
 			LOGGER.info("------------------------------------------------");
 			LOGGER.info("Is request 4 reported as stolen? : {}", records4.hasTheftReport());
+			logRule(request1, "Request details");
+			logRule(vCalc1, "Vehicle payout details");
 			LOGGER.info("Starting Word Count Analysis...");
 			WordCounter.runAnalysis("src/main/resources/insurance.txt", "src/main/resources/output.txt", "insurance");
 			LOGGER.info("File analysis completed successfully.");
@@ -141,19 +150,117 @@ public class Main {
 		}
 	}
 
-	public static void logAssetsInfo(List<? extends InsurancedItem> items) {
+	public static void logAssetsInfo(List<? extends IInsurancedItem> items) {
 		items.forEach(item ->
-				LOGGER.info("Insured Asset: {} | Value: ${}", item, item.getValue())
+				LOGGER.info("Insured Asset: {} | Value: ${}", item, item.value())
 		);
 	}
 
 	public static String getApprovalMessage(ClientRequests request) {
-		if (!request.hasValidStatus() || request.getStatus() == RequestStatus.PENDING) {
+		if (request.hasValidStatus() || request.getStatus() == RequestStatus.PENDING) {
 			return "This request is not yet approved";
 		}
 		if (request.getStatus() == RequestStatus.APPROVED) {
 			return "This request is approved";
 		}
 		return "This request has been rejected";
+	}
+
+	public static void logRule(Object target, String title) {
+		LOGGER.info("{}:", title);
+
+		String fieldName = "";
+		String methodName = "";
+		int methodParams = 0;
+
+		if (target instanceof ClientRequests request) {
+			fieldName = "status";
+			methodName = "getStatusMessage";
+			methodParams = 1;
+			LOGGER.info("Request #{}:", request.getRequestNumber());
+		} else if (target instanceof ObjectRecord) {
+			fieldName = "isStolen";
+			methodName = "hasTheftReport";
+		} else if (target instanceof VehicleCalculator || target instanceof ObjectCalculator) {
+			fieldName = "repairPrice";
+			methodName = "calculatePayout";
+		}
+
+		for (Field field : target.getClass().getDeclaredFields()) {
+			if (!field.getName().equals(fieldName)) {
+				continue;
+			}
+
+			boolean restoreAccess = field.canAccess(target);
+			try {
+				field.setAccessible(true);
+				Object value = field.get(target);
+				if ("status".equals(field.getName())) {
+					LOGGER.info("Current status: {}", value);
+				} else if ("isStolen".equals(field.getName())) {
+					LOGGER.info("Theft reported: {}", value);
+				} else if ("repairPrice".equals(field.getName())) {
+					LOGGER.info("Repair estimate: ${}", value);
+				}
+			} catch (IllegalAccessException | InaccessibleObjectException | SecurityException e) {
+				LOGGER.warn("Could not read {}.", field.getName());
+			} finally {
+				try {
+					field.setAccessible(restoreAccess);
+				} catch (InaccessibleObjectException | SecurityException ignored) {
+				}
+			}
+		}
+
+		for (Method method : target.getClass().getDeclaredMethods()) {
+			if (!method.getName().equals(methodName) || method.getParameterCount() != methodParams) {
+				continue;
+			}
+
+			if ("calculatePayout".equals(method.getName())) {
+				boolean restoreAccess = method.canAccess(target);
+				try {
+					method.setAccessible(true);
+					Object value = method.invoke(target);
+					LOGGER.info("Final payout: ${}", value);
+				} catch (ReflectiveOperationException | InaccessibleObjectException | SecurityException e) {
+					LOGGER.warn("Could not calculate payout.");
+				} finally {
+					try {
+						method.setAccessible(restoreAccess);
+					} catch (InaccessibleObjectException | SecurityException ignored) {
+					}
+				}
+			}
+
+			Rule rule = method.getAnnotation(Rule.class);
+			if (rule != null) {
+				LOGGER.info("Rule: {}", rule.value().isBlank() ? rule.category() : rule.value());
+			}
+		}
+	}
+	public static void runThreadDemo () {
+		LOGGER.info("Starting thread demo...");
+
+		NameThread thread1 = new NameThread("Extended Thread");
+
+		Thread thread2 = new Thread(() -> {
+			for (int i = 1; i <= 10; i++) {
+				System.out.println(Thread.currentThread().getName() + " - iteration " + i);
+				try {
+					Thread.sleep(200);
+				} catch (InterruptedException e) {
+					System.out.println(Thread.currentThread().getName() + " interrupted");
+				}
+			}
+		}, "Runnable Thread");
+
+		thread1.start();
+		thread2.start();
+	}
+	public static void runConnectionPoolDemo () {
+		LOGGER.info("Running Connection Pool demos...");
+		PoolTest.runTest();
+		PoolTest.runSecondTest();
 	}
 }
